@@ -31,7 +31,6 @@ uint8_t countDifferentBits(uint64_t num1, uint64_t num2)
 
 void print(uint64_t Array[], uint8_t Transitions[], uint64_t Sum)
 {
-    printf("\n\n\t\t %d random 64-bit numbers    --->    hybrid encode.\n", ARRAYSIZE);
     printf("*---------------------------------------------------------------------------------------------------------------*\n");
     printf("*     ");
     printf("Index");
@@ -96,7 +95,7 @@ int main(int argc, char *argv[])
         randArrayTransitions[i] = countDifferentBits(randArray[i - 1] , randArray[i]);
         randSum += randArrayTransitions[i];
     }
-    
+    printf("\n\n\t\t %d random 64-bit numbers\n", ARRAYSIZE);
     print(randArray, randArrayTransitions, randSum);
     //----------------------------------------------------------------------------------------------------------------------------------------------------------Random --> Grey
     // Create the grey code array
@@ -117,7 +116,7 @@ int main(int argc, char *argv[])
         greyArrayTransitions[i] = countDifferentBits(greyArray[i - 1] , greyArray[i]);
         greySum += greyArrayTransitions[i];
     }
-
+    printf("\n\n\t\t %d random 64-bit numbers    --->    grey encode.\n", ARRAYSIZE);
     print(greyArray, greyArrayTransitions, greySum);
     //----------------------------------------------------------------------------------------------------------------------------------------------------------Random --> Bus Invert
     uint64_t busEncodedArray[ARRAYSIZE] = {0};
@@ -154,7 +153,7 @@ int main(int argc, char *argv[])
         uint8_t invert_transition = invertSignalArray[i - 1] ^ invertSignalArray[i];
         busSum += invert_transition; 
     }
-
+    printf("\n\n\t\t %d random 64-bit numbers    --->    bus invert encode.\n", ARRAYSIZE);
     print(busEncodedArray, busEncodedArrayTransitions, busSum);
 
     
@@ -192,7 +191,7 @@ int main(int argc, char *argv[])
         uint8_t T0_transition = T0SignalArray[i - 1] ^ T0SignalArray[i];
         T0Sum += T0_transition; 
    }
-
+   printf("\n\n\t\t %d random 64-bit numbers    --->    T0 encode.\n", ARRAYSIZE);
    print(T0EncodedArray, T0EncodedArrayTransitions, T0Sum);
 
    
@@ -245,7 +244,7 @@ int main(int argc, char *argv[])
         uint8_t hybrid_inv_transition = hybridinvertSignalArray[i - 1] ^ hybridinvertSignalArray[i];
         hybridSum += hybrid_inv_transition; 
    }
-
+   printf("\n\n\t\t %d random 64-bit numbers    --->    hybrid encode.\n", ARRAYSIZE);
    print(hybridEncodedArray, hybridEncodedArrayTransitions, hybridSum);
 
 
@@ -261,9 +260,16 @@ int main(int argc, char *argv[])
         printf("\t Given a sequential access pattern\n");
     }
     printf("\t total diffs for; (random transitions) - (greyCode transitions) = %ld\n", randSum - greySum);
+    printf("\t reduction in switching activity for greyCode transitions = %f\n\n", ((float)(randSum - greySum) / (float)randSum) * 100);
+
     printf("\t total diffs for; (random transitions) - (bus encode transitions) = %ld\n", randSum - busSum);
+    printf("\t reduction in switching activity for bus encoded transitions = %f\n\n", ((float)(randSum - busSum) / (float)randSum) * 100);
+
     printf("\t total diffs for; (random transitions) - (T0 transitions) = %ld\n", randSum - T0Sum);
+    printf("\t reduction in switching activity for T0 encoded transitions = %f\n\n", ((float)(randSum - T0Sum) / (float)randSum) * 100);
+
     printf("\t total diffs for; (random transitions) - (hybrid transitions) = %ld\n", randSum - hybridSum);
+    printf("\t reduction in switching activity for hybrid encoded transitions = %f\n", ((float)(randSum - hybridSum) / (float)randSum) * 100);
     return 0;
 }
 
