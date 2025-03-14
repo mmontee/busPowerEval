@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <time.h> 
 
+#define ARRAYSIZE 60
+
 void print_bits(uint64_t reg) 
 {
     for (int i = 0; i < 64; i++) 
@@ -27,7 +29,32 @@ uint8_t countDifferentBits(uint64_t num1, uint64_t num2)
     return count;
 }
 
-#define ARRAYSIZE 60
+void print(uint64_t Array[], uint8_t Transitions[], uint64_t Sum)
+{
+    printf("\n\n\t\t %d random 64-bit numbers    --->    hybrid encode.\n", ARRAYSIZE);
+    printf("*---------------------------------------------------------------------------------------------------------------*\n");
+    printf("*     ");
+    printf("Index");
+    printf("     *\t\t\t\t\t");
+    printf("Bits");
+    printf("\t\t\t\t\t*");
+    printf("  Transitions  ");
+    printf("*\n");
+    printf("*---------------------------------------------------------------------------------------------------------------*\n");
+    for (int i = 0; i < ARRAYSIZE; i++) 
+    {
+            printf("*\t%d\t", i);
+            printf("*\t");
+            print_bits(Array[i]);
+            printf("\t*\t");
+            printf("%d", Transitions[i]);
+            printf("\t*\n");
+    }
+    printf("*---------------------------------------------------------------------------------------------------------------*\n");
+    printf("\ntotal transition for random --> hybrid encode = %ld\n", Sum);
+}
+
+
 
 int main(int argc, char *argv[]) 
 {
@@ -70,24 +97,7 @@ int main(int argc, char *argv[])
         randSum += randArrayTransitions[i];
     }
     
-    printf("\n\n\t\t %d random 64-bit numbers.\n", ARRAYSIZE);
-    printf("*-----------------------------------------------------------------------------------------------*\n");
-    printf("*\t\t\t\t");
-    printf("Bits");
-    printf("\t\t\t\t\t\t*");
-    printf("  Transitions  ");
-    printf("*\n");
-    printf("*-----------------------------------------------------------------------------------------------*\n");
-    for (int i = 0; i < ARRAYSIZE; i++) 
-    {
-        printf("*\t");
-        print_bits(randArray[i]);
-        printf("\t*\t");
-        printf("%d", randArrayTransitions[i]);
-        printf("\t*\n");
-    }
-    printf("*-----------------------------------------------------------------------------------------------*\n");
-    printf("\ntotal transition for randoms = %ld\n", randSum);
+    print(randArray, randArrayTransitions, randSum);
     //----------------------------------------------------------------------------------------------------------------------------------------------------------Random --> Grey
     // Create the grey code array
     uint64_t greyArray[ARRAYSIZE] = {0};
@@ -108,25 +118,7 @@ int main(int argc, char *argv[])
         greySum += greyArrayTransitions[i];
     }
 
-    printf("\n\n\t\t %d random 64-bit numbers    --->    Grey code.\n", ARRAYSIZE);
-    printf("*-----------------------------------------------------------------------------------------------*\n");
-    printf("*\t\t\t\t");
-    printf("Bits");
-    printf("\t\t\t\t\t\t*");
-    printf("  Transitions  ");
-    printf("*\n");
-    printf("*-----------------------------------------------------------------------------------------------*\n");
-    for (int i = 0; i < ARRAYSIZE; i++) 
-    {
-        printf("*\t");
-        print_bits(greyArray[i]);
-        printf("\t*\t");
-        printf("%d", greyArrayTransitions[i]);
-        printf("\t*\n");
-        
-    }
-    printf("*-----------------------------------------------------------------------------------------------*\n");
-    printf("\ntotal transition for random --> grey = %ld\n", greySum);
+    print(greyArray, greyArrayTransitions, greySum);
     //----------------------------------------------------------------------------------------------------------------------------------------------------------Random --> Bus Invert
     uint64_t busEncodedArray[ARRAYSIZE] = {0};
     uint8_t busEncodedArrayTransitions[ARRAYSIZE] = {0};
@@ -163,24 +155,7 @@ int main(int argc, char *argv[])
         busSum += invert_transition; 
     }
 
-    printf("\n\n\t\t %d random 64-bit numbers    --->    bus encode.\n", ARRAYSIZE);
-    printf("*-----------------------------------------------------------------------------------------------*\n");
-    printf("*\t\t\t\t");
-    printf("Bits");
-    printf("\t\t\t\t\t\t*");
-    printf("  Transitions  ");
-    printf("*\n");
-    printf("*-----------------------------------------------------------------------------------------------*\n");
-    for (int i = 0; i < ARRAYSIZE; i++) 
-    {
-        printf("*\t");
-        print_bits(busEncodedArray[i]);
-        printf("\t*\t");
-        printf("%d", busEncodedArrayTransitions[i]);
-        printf("\t*\n");
-    }
-    printf("*-----------------------------------------------------------------------------------------------*\n");
-    printf("\ntotal transition for random --> bus encode = %ld\n", busSum);
+    print(busEncodedArray, busEncodedArrayTransitions, busSum);
 
     
 
@@ -218,24 +193,7 @@ int main(int argc, char *argv[])
         T0Sum += T0_transition; 
    }
 
-   printf("\n\n\t\t %d random 64-bit numbers    --->    T0 encode.\n", ARRAYSIZE);
-   printf("*-----------------------------------------------------------------------------------------------*\n");
-   printf("*\t\t\t\t");
-   printf("Bits");
-   printf("\t\t\t\t\t\t*");
-   printf("  Transitions  ");
-   printf("*\n");
-   printf("*-----------------------------------------------------------------------------------------------*\n");
-   for (int i = 0; i < ARRAYSIZE; i++) 
-   {
-       printf("*\t");
-       print_bits(T0EncodedArray[i]);
-       printf("\t*\t");
-       printf("%d", T0EncodedArrayTransitions[i]);
-       printf("\t*\n");
-   }
-   printf("*-----------------------------------------------------------------------------------------------*\n");
-   printf("\ntotal transition for random --> T0 encode = %ld\n", T0Sum);
+   print(T0EncodedArray, T0EncodedArrayTransitions, T0Sum);
 
    
 
@@ -288,24 +246,7 @@ int main(int argc, char *argv[])
         hybridSum += hybrid_inv_transition; 
    }
 
-   printf("\n\n\t\t %d random 64-bit numbers    --->    hybrid encode.\n", ARRAYSIZE);
-   printf("*-----------------------------------------------------------------------------------------------*\n");
-   printf("*\t\t\t\t");
-   printf("Bits");
-   printf("\t\t\t\t\t\t*");
-   printf("  Transitions  ");
-   printf("*\n");
-   printf("*-----------------------------------------------------------------------------------------------*\n");
-   for (int i = 0; i < ARRAYSIZE; i++) 
-   {
-       printf("*\t");
-       print_bits(hybridEncodedArray[i]);
-       printf("\t*\t");
-       printf("%d", hybridEncodedArrayTransitions[i]);
-       printf("\t*\n");
-   }
-   printf("*-----------------------------------------------------------------------------------------------*\n");
-   printf("\ntotal transition for random --> hybrid encode = %ld\n", hybridSum);
+   print(hybridEncodedArray, hybridEncodedArrayTransitions, hybridSum);
 
 
     
