@@ -186,42 +186,39 @@ int main(int argc, char *argv[])
 
 
    //----------------------------------------------------------------------------------------------------------------------------------------------------------Random --> T0
-   uint64_t busEncodedArray[ARRAYSIZE] = {0};
-   uint8_t busEncodedArrayTransitions[ARRAYSIZE] = {0};
-   uint8_t invertSignalArray[ARRAYSIZE] = {0};
+   uint64_t T0EncodedArray[ARRAYSIZE] = {0};
+   uint8_t T0EncodedArrayTransitions[ARRAYSIZE] = {0};
+   uint8_t T0SignalArray[ARRAYSIZE] = {0};
 
-   busEncodedArray[0] = randArray[0]; // init 0 so i can start at 1
-
+   T0EncodedArray[0] = randArray[0]; // init 0 so i can start at 1
+    uint64_t count = 0;
    for (int i = 1; i < ARRAYSIZE; i++) 
    {
-       uint64_t current_data = randArray[i];
-       uint8_t invert_signal = 0;
-
-       uint8_t transitionsTemp = countDifferentBits(busEncodedArray[i - 1] , randArray[i]);// blue arrow logic
-
-       if (transitionsTemp > 32) 
-       { // if trasitions > n/2 invert
-           current_data = ~current_data;
-           invert_signal = 1;
-       }
-
-       busEncodedArray[i] = current_data;
-       invertSignalArray[i] = invert_signal;
+        if(randArray[i] == (T0EncodedArray[i - 1] + 1+ count))
+        {
+            T0SignalArray[i] = 1;
+            T0EncodedArray[i] = T0EncodedArray[i - 1];
+            count++;
+        }
+        else
+        {
+            T0EncodedArray[i] = randArray[i];
+            count = 0;
+        }
    }
 
 
     // count the transitions
-    uint64_t busSum = 0;
+    uint64_t T0Sum = 0;
    for (int i = 1; i < ARRAYSIZE; i++) 
    {
-       busEncodedArrayTransitions[i] = countDifferentBits(busEncodedArray[i - 1] , busEncodedArray[i]);
-       busSum += busEncodedArrayTransitions[i];
-
-       uint8_t invert_transition = invertSignalArray[i - 1] ^ invertSignalArray[i];
-       busSum += invert_transition; 
+        T0EncodedArrayTransitions[i] = countDifferentBits(T0EncodedArray[i - 1] , T0EncodedArray[i]);
+        T0Sum += T0EncodedArrayTransitions[i];
+        uint8_t T0_transition = T0SignalArray[i - 1] ^ T0SignalArray[i];
+        T0Sum += T0_transition; 
    }
 
-   printf("\n\n\t\t %d random 64-bit numbers    --->    bus encode.\n", ARRAYSIZE);
+   printf("\n\n\t\t %d random 64-bit numbers    --->    T0 encode.\n", ARRAYSIZE);
    printf("*-----------------------------------------------------------------------------------------------*\n");
    printf("*\t\t\t\t");
    printf("Bits");
@@ -232,15 +229,84 @@ int main(int argc, char *argv[])
    for (int i = 0; i < ARRAYSIZE; i++) 
    {
        printf("*\t");
-       print_bits(busEncodedArray[i]);
+       print_bits(T0EncodedArray[i]);
        printf("\t*\t");
-       printf("%d", busEncodedArrayTransitions[i]);
+       printf("%d", T0EncodedArrayTransitions[i]);
        printf("\t*\n");
    }
    printf("*-----------------------------------------------------------------------------------------------*\n");
-   printf("\ntotal transition for random --> bus encode = %ld\n", busSum);
+   printf("\ntotal transition for random --> T0 encode = %ld\n", T0Sum);
 
    
+
+
+   //----------------------------------------------------------------------------------------------------------------------------------------------------------Random --> T0 + Bus invert
+   uint64_t hybridEncodedArray[ARRAYSIZE] = {0};
+   uint8_t hybridEncodedArrayTransitions[ARRAYSIZE] = {0};
+   uint8_t hybridHoldSignalArray[ARRAYSIZE] = {0};
+   uint8_t hybridinvertSignalArray[ARRAYSIZE] = {0};
+
+   hybridEncodedArray[0] = randArray[0]; // init 0 so i can start at 1
+   count = 0;
+   for (int i = 1; i < ARRAYSIZE; i++) 
+   {
+        if(randArray[i] == (hybridEncodedArray[i - 1] + 1+ count))
+        {
+            hybridHoldSignalArray[i] = 1;
+            hybridEncodedArray[i] = hybridEncodedArray[i - 1];
+            count++;
+        }
+        else
+        {
+            uint64_t current_data = randArray[i];
+            uint8_t invert_signal = 0;
+    
+            uint8_t transitionsTemp = countDifferentBits(hybridEncodedArray[i - 1] , randArray[i]);// blue arrow logic
+    
+            if (transitionsTemp > 32) 
+            { // if trasitions > n/2 invert
+                current_data = ~current_data;
+                invert_signal = 1;
+            }
+    
+            hybridEncodedArray[i] = current_data;
+            hybridinvertSignalArray[i] = invert_signal;
+            count = 0;
+        }
+   }
+
+
+    // count the transitions
+    uint64_t hybridSum = 0;
+   for (int i = 1; i < ARRAYSIZE; i++) 
+   {
+        hybridEncodedArrayTransitions[i] = countDifferentBits(hybridEncodedArray[i - 1] , hybridEncodedArray[i]);
+        hybridSum += hybridEncodedArrayTransitions[i];
+        uint8_t hybrid_hold_transition = hybridHoldSignalArray[i - 1] ^ hybridHoldSignalArray[i];
+        hybridSum += hybrid_hold_transition; 
+        uint8_t hybrid_inv_transition = hybridinvertSignalArray[i - 1] ^ hybridinvertSignalArray[i];
+        hybridSum += hybrid_inv_transition; 
+   }
+
+   printf("\n\n\t\t %d random 64-bit numbers    --->    hybrid encode.\n", ARRAYSIZE);
+   printf("*-----------------------------------------------------------------------------------------------*\n");
+   printf("*\t\t\t\t");
+   printf("Bits");
+   printf("\t\t\t\t\t\t*");
+   printf("  Transitions  ");
+   printf("*\n");
+   printf("*-----------------------------------------------------------------------------------------------*\n");
+   for (int i = 0; i < ARRAYSIZE; i++) 
+   {
+       printf("*\t");
+       print_bits(hybridEncodedArray[i]);
+       printf("\t*\t");
+       printf("%d", hybridEncodedArrayTransitions[i]);
+       printf("\t*\n");
+   }
+   printf("*-----------------------------------------------------------------------------------------------*\n");
+   printf("\ntotal transition for random --> hybrid encode = %ld\n", hybridSum);
+
 
     
     //----------------------------------------------------------------------------------------------------------------------------------------------------------Results
@@ -255,6 +321,8 @@ int main(int argc, char *argv[])
     }
     printf("\t total diffs for; (random transitions) - (greyCode transitions) = %ld\n", randSum - greySum);
     printf("\t total diffs for; (random transitions) - (bus encode transitions) = %ld\n", randSum - busSum);
+    printf("\t total diffs for; (random transitions) - (T0 transitions) = %ld\n", randSum - T0Sum);
+    printf("\t total diffs for; (random transitions) - (hybrid transitions) = %ld\n", randSum - hybridSum);
     return 0;
 }
 
