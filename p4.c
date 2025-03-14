@@ -183,6 +183,65 @@ int main(int argc, char *argv[])
     printf("\ntotal transition for random --> bus encode = %ld\n", busSum);
 
     
+
+
+   //----------------------------------------------------------------------------------------------------------------------------------------------------------Random --> T0
+   uint64_t busEncodedArray[ARRAYSIZE] = {0};
+   uint8_t busEncodedArrayTransitions[ARRAYSIZE] = {0};
+   uint8_t invertSignalArray[ARRAYSIZE] = {0};
+
+   busEncodedArray[0] = randArray[0]; // init 0 so i can start at 1
+
+   for (int i = 1; i < ARRAYSIZE; i++) 
+   {
+       uint64_t current_data = randArray[i];
+       uint8_t invert_signal = 0;
+
+       uint8_t transitionsTemp = countDifferentBits(busEncodedArray[i - 1] , randArray[i]);// blue arrow logic
+
+       if (transitionsTemp > 32) 
+       { // if trasitions > n/2 invert
+           current_data = ~current_data;
+           invert_signal = 1;
+       }
+
+       busEncodedArray[i] = current_data;
+       invertSignalArray[i] = invert_signal;
+   }
+
+
+    // count the transitions
+    uint64_t busSum = 0;
+   for (int i = 1; i < ARRAYSIZE; i++) 
+   {
+       busEncodedArrayTransitions[i] = countDifferentBits(busEncodedArray[i - 1] , busEncodedArray[i]);
+       busSum += busEncodedArrayTransitions[i];
+
+       uint8_t invert_transition = invertSignalArray[i - 1] ^ invertSignalArray[i];
+       busSum += invert_transition; 
+   }
+
+   printf("\n\n\t\t %d random 64-bit numbers    --->    bus encode.\n", ARRAYSIZE);
+   printf("*-----------------------------------------------------------------------------------------------*\n");
+   printf("*\t\t\t\t");
+   printf("Bits");
+   printf("\t\t\t\t\t\t*");
+   printf("  Transitions  ");
+   printf("*\n");
+   printf("*-----------------------------------------------------------------------------------------------*\n");
+   for (int i = 0; i < ARRAYSIZE; i++) 
+   {
+       printf("*\t");
+       print_bits(busEncodedArray[i]);
+       printf("\t*\t");
+       printf("%d", busEncodedArrayTransitions[i]);
+       printf("\t*\n");
+   }
+   printf("*-----------------------------------------------------------------------------------------------*\n");
+   printf("\ntotal transition for random --> bus encode = %ld\n", busSum);
+
+   
+
     
     //----------------------------------------------------------------------------------------------------------------------------------------------------------Results
     printf("\n\n\n\t\t\t\t ***Results*** \n\n");
